@@ -7,6 +7,9 @@
 	word cannot start or end with the digram or in the middle of a combined
 	word. E.g. for digram SA, applesauce is disqualified.
 
+	To make this game even more challenging the digram cannot be at the start of
+	a syllable.
+
 	The computer is really good at this game if you provide it with a long 
 	dictionary file. Any text or .dic file will work. By default the hunspell 
 	dictionary is used, since it is already installed on most systems.
@@ -17,6 +20,7 @@
 		length is allowed.
 '''
 import sys
+from hyphenate import hyphenate_word
 
 # Some example digrams
 digram = [
@@ -46,7 +50,11 @@ print 'Playing digram for ' + ' '.join(digram) + '!'
 # Play the game
 result = {d:set(filter(lambda x: d in x[1:-1],set(line.strip().split('/')[0].lower() for line in lines))) for d in digram}
 
-# Show the result
+# Judge and show the results
 for d,answer in result.iteritems():
 	print 'Answers for digram "'  + d + '" are:'
-	print answer
+	for a in answer:
+		if d in [h[:2] for h in hyphenate_word(a)]:
+			print '>' + '-'.join(hyphenate_word(a))
+		else:
+			print '-'.join(hyphenate_word(a))
