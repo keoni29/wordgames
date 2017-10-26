@@ -7,15 +7,19 @@
 	word cannot start or end with the digram or in the middle of a combined
 	word. E.g. for digram SA, applesauce is disqualified.
 
+	To make this game even more challenging the digram cannot be at the start of
+	a syllable.
+
 	The computer is really good at this game if you provide it with a long 
 	dictionary file. Any text or .dic file will work. By default the hunspell 
 	dictionary is used, since it is already installed on most systems.
 
 	Known issues:
-	- If the dictionary file contains combined words they will be matched.
+	- Some words are not correctly hyphenated.
 	- User input is not checked. Numbers and symbols are allowed. Any string
 		length is allowed.
 '''
+import pyphen
 import sys
 
 # Some example digrams
@@ -25,6 +29,15 @@ digram = [
 
 # Default dictionary location
 filename = '/usr/share/hunspell/en_US.dic'
+
+# Configure pyphen
+my_lang = 'en_US'
+
+if not pyphen.language_fallback(my_lang) in pyphen.LANGUAGES:
+	sys.exit('Could not find dictionary for hyphenation')
+	#TODO continue without checks for digrams at the start of syllables
+
+dic = pyphen.Pyphen(lang=my_lang)
 
 # Commandline parameters
 argc = len(sys.argv)
@@ -46,7 +59,16 @@ print 'Playing digram for ' + ' '.join(digram) + '!'
 # Play the game
 result = {d:set(filter(lambda x: d in x[1:-1],set(line.strip().split('/')[0].lower() for line in lines))) for d in digram}
 
-# Show the result
+# Judge and show the results
 for d,answer in result.iteritems():
 	print 'Answers for digram "'  + d + '" are:'
-	print answer
+
+	for a in answer:
+		try:
+			if d in [a[p:p+2] for p in dic.positions(a)]:
+				print '>' + dic.inserted(a)
+			else:
+				print dic.inserted(a)
+		except UnicodeDecodeError:
+			print '>'
+			pass
