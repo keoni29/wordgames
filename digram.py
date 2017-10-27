@@ -54,7 +54,7 @@ result = {d:set(filter(lambda x: d in x[1:-1],set(line.strip().split('/')[0].low
 for d,answer in result.iteritems():
 	print 'Answers for digram "'  + d + '" are:'
 	for a in answer:
-		if d in [h[:2] for h in hyphenate_word(a)]:
+		if d in [h[:len(d)] for h in hyphenate_word(a)]:
 			print '>' + '-'.join(hyphenate_word(a))
 		else:
 			print '-'.join(hyphenate_word(a))
