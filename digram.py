@@ -65,7 +65,7 @@ for d,answer in result.iteritems():
 
 	for a in answer:
 		try:
-			if d in [a[p:p+2] for p in dic.positions(a)]:
+			if d in [a[p:p+len(d)] for p in dic.positions(a)]:
 				print '>' + dic.inserted(a)
 			else:
 				print dic.inserted(a)
