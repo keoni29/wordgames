@@ -37,16 +37,16 @@ try:
 	with open(filename,'r') as dic_file:
 		lines = dic_file.readlines()
 except IOError:
-	print "Error: Dictionary file does not exist."
+	print("Error: Dictionary file does not exist.")
 	pass
 
 # Show the player the digrams he just typed in
-print 'Playing digram for ' + ' '.join(digram) + '!'
+print('Playing digram for ' + ' '.join(digram) + '!')
 
 # Play the game
-result = {d:set(filter(lambda x: d in x[1:-1],set(line.strip().split('/')[0].lower() for line in lines))) for d in digram}
+result = {d:set([x for x in set(line.strip().split('/')[0].lower() for line in lines) if d in x[1:-1]]) for d in digram}
 
 # Show the result
-for d,answer in result.iteritems():
-	print 'Answers for digram "'  + d + '" are:'
-	print answer
+for d,answer in result.items():
+	print('Answers for digram "'  + d + '" are:')
+	print(answer)
